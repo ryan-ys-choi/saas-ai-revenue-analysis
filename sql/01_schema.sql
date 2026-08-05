@@ -26,7 +26,12 @@ CREATE TABLE financial_facts (
     fiscal_period TEXT,                    -- 'Q1'..'Q4' or 'FY'
     form_type     TEXT NOT NULL,           -- '10-K' | '10-Q'
     filed_date    DATE NOT NULL,
-    UNIQUE (company_id, tag, period_end)
+    -- period_start is part of the key: income-statement tags report multiple
+    -- durations ending on the same date (e.g. a 3-month Q3 fact AND a 9-month
+    -- YTD fact both end on the same day). Keying on period_end alone would
+    -- collapse them and could keep the YTD value instead of the quarter.
+    -- (instant/balance-sheet facts have period_start NULL -> one row per end.)
+    UNIQUE (company_id, tag, period_start, period_end)
 );
 
 CREATE TABLE context_events (

@@ -74,11 +74,15 @@ def main() -> None:
     combined = pd.concat(frames, ignore_index=True)
 
     # Keep only 10-K / 10-Q facts; drop amended-filing duplicates by keeping
-    # the earliest filed fact per company/tag/period end
+    # the earliest filed fact per company/tag/period. The period key includes
+    # BOTH start and end: income-statement tags report several durations ending
+    # on the same date (a 3-month quarter and a 9-month YTD fact both end on the
+    # same day), and deduping on "end" alone would discard one of them --
+    # potentially keeping the YTD figure instead of the discrete quarter.
     combined = combined[combined["form"].isin(["10-K", "10-Q"])]
     combined = (
         combined.sort_values("filed")
-        .drop_duplicates(subset=["company", "tag", "end"], keep="first")
+        .drop_duplicates(subset=["company", "tag", "start", "end"], keep="first")
         .reset_index(drop=True)
     )
 
