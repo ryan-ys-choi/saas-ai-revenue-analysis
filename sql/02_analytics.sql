@@ -17,11 +17,19 @@ WITH per_tag AS (
     SELECT
         f.company_id,
         f.period_end,
-        SUM(CASE WHEN f.tag IN ('ContractWithCustomerLiabilityCurrent',
-                                'DeferredRevenueCurrent')      THEN f.value END) AS dr_current,
-        SUM(CASE WHEN f.tag IN ('ContractWithCustomerLiabilityNoncurrent',
-                                'DeferredRevenueNoncurrent')   THEN f.value END) AS dr_noncurrent,
-        SUM(CASE WHEN f.tag = 'ContractWithCustomerLiability'  THEN f.value END) AS dr_combined
+        -- Prefer the ASC 606 tag, fall back to the legacy tag. Do NOT sum the
+        -- two: in the ASC 606 transition year a filer may report the same
+        -- balance under both tags (e.g. Chegg 2018-12-31), and summing would
+        -- double-count that quarter.
+        COALESCE(
+            MAX(CASE WHEN f.tag = 'ContractWithCustomerLiabilityCurrent' THEN f.value END),
+            MAX(CASE WHEN f.tag = 'DeferredRevenueCurrent'               THEN f.value END)
+        ) AS dr_current,
+        COALESCE(
+            MAX(CASE WHEN f.tag = 'ContractWithCustomerLiabilityNoncurrent' THEN f.value END),
+            MAX(CASE WHEN f.tag = 'DeferredRevenueNoncurrent'               THEN f.value END)
+        ) AS dr_noncurrent,
+        MAX(CASE WHEN f.tag = 'ContractWithCustomerLiability'  THEN f.value END) AS dr_combined
     FROM financial_facts f
     GROUP BY f.company_id, f.period_end
 )
