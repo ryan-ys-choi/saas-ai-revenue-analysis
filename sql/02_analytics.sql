@@ -31,6 +31,12 @@ WITH per_tag AS (
         ) AS dr_noncurrent,
         MAX(CASE WHEN f.tag = 'ContractWithCustomerLiability'  THEN f.value END) AS dr_combined
     FROM financial_facts f
+    -- Keep quarter-end balances only. ASC 606 also requires disclosing the
+    -- contract-liability balance at the BEGINNING of the period, which shows
+    -- up as instant facts dated Jan 1 (e.g. Coursera). Those duplicate the
+    -- prior Dec 31 balance one day later and would inject phantom "quarters"
+    -- into the LAG-based growth series.
+    WHERE f.period_end = (date_trunc('month', f.period_end) + interval '1 month - 1 day')::date
     GROUP BY f.company_id, f.period_end
 )
 SELECT

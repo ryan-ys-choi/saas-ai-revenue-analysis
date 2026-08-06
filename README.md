@@ -35,13 +35,15 @@ SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
 
 ## Data-Quality Fixes
 
-Three correctness issues were found and fixed while validating the pipeline against real SEC filings. Each traces back to a quirk of how XBRL facts are reported — and each would have quietly corrupted the analysis if left in:
+Four correctness issues were found and fixed while validating the pipeline against real SEC filings. Each traces back to a quirk of how XBRL facts are reported — and each would have quietly corrupted the analysis if left in:
 
 1. **Q4 revenue is never filed on its own.** 10-Qs report Q1–Q3 as discrete ~90-day periods, but there is no "Q4 10-Q" — the 10-K reports the *full fiscal year*. Filtering to quarterly durations therefore dropped every fourth quarter, leaving revenue growth and the roll-forward `NULL` each Q4. **Fix:** derive `Q4 = full-year − (Q1 + Q2 + Q3)` and flag it (`is_derived_q4`) so a reconstructed quarter stays visually distinct from a reported one on the dashboard. *(Validated: Chegg FY2024 Q1–Q4 sum back to the reported $617M annual revenue.)*
 
 2. **YTD and quarterly facts collide on the same date.** Income-statement tags are filed at multiple durations that share an end date — e.g. Sep 30 carries both a 3-month (Q3) fact and a 9-month year-to-date fact. The original de-dup and the table's uniqueness key used the period *end* only, which could silently keep the YTD figure in place of the quarter. **Fix:** key on `(tag, period_start, period_end)` so both survive; the analytics layer then selects the quarter by duration.
 
 3. **Deferred revenue double-counted in the ASC 606 transition year.** Filers may report the same balance under both the legacy (`DeferredRevenueCurrent`) and new (`ContractWithCustomerLiabilityCurrent`) tags during the changeover year — e.g. Chegg, 2018-12-31: $17.4M under *each*. Summing the two doubled that quarter to $34.8M. **Fix:** prefer the ASC 606 tag and fall back to the legacy tag, rather than summing the pair.
+
+4. **Opening-balance disclosures masquerading as quarters.** ASC 606 also requires disclosing the contract-liability balance at the *beginning* of the period, which arrives as instant facts dated Jan 1 (Coursera filed four of these). Each duplicates the prior Dec 31 balance one day later, injecting phantom "quarters" that shift every `LAG`-based growth calculation off by one. **Fix:** accept only balances dated on an actual month-end.
 
 ## Dashboard
 
