@@ -53,7 +53,17 @@ Four data problems were found and fixed while testing the pipeline against real 
 
 ## Findings
 
-<!-- Fill in after analysis: 3-5 bullet findings, one per company plus cross-cutting insight -->
+*All figures computed from SEC XBRL data via the pipeline above (through Q1 FY2026).*
+
+- **Chegg — the warning light worked, twice.** Deferred revenue growth turned negative in Q3 2021 (−3.8% YoY) while revenue was still growing +11.6% — three quarters before revenue itself went negative. It flashed again in Q1 2023, one quarter after ChatGPT launched, and never recovered; revenue decline then deepened every year, from −7% (early 2023) to −48% (early 2026). Both times, the backlog stopped refilling before the income statement showed it.
+
+- **Chegg — but the same signal also gave a false "recovery."** During 2022, DR growth looked strongly positive (+24% to +60% YoY) even as revenue shrank. The cause wasn't a rebound: the Busuu acquisition closed in Q1 2022 and its deferred revenue landed on Chegg's balance sheet — visible in the data as a one-quarter jump from $35M to $60M. An acquisition can make a dying backlog look like a growing one for a full year of YoY comparisons.
+
+- **Duolingo — the same warning, chosen on purpose.** Through mid-2025, DR grew ~48–51% YoY, comfortably ahead of revenue (~38–41%). Then three straight quarters of sharp slowdown: 42% → 33% → 24% by Q1 2026, with DR growth falling *below* revenue growth for the first time. On paper this is the Chegg pattern — but management pre-announced it, giving up $50M+ in bookings to expand free AI features and grow daily active users. Identical signal, opposite meaning.
+
+- **Coursera — sleepy headline, improving engine.** Revenue growth looks stuck in the single digits (6–10%), but DR growth ran well ahead of it — peaking at +24% YoY in early 2025 — as the business shifted toward subscriptions (now >85% of revenue). The backlog was being built, not burned. By Q1 2026 DR growth had eased to ~8%, roughly in line with revenue: worth watching, not yet a warning.
+
+- **Cross-cutting: the number tells you *where* to look, not *what* it means.** Three companies produced near-identical deceleration signals. One was existential distress (Chegg), one was a deliberate strategic trade (Duolingo), one was a mix-shift underneath a flat headline (Coursera) — and M&A injected a false positive on top. A bookings-deceleration screen is a good tripwire and a bad verdict: every signal here required the earnings-call context layer to interpret correctly.
 
 ## Repo Structure
 
