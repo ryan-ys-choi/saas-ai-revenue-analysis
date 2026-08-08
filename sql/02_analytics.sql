@@ -3,9 +3,13 @@
 -- v_deferred_revenue    : combined current + noncurrent deferred revenue
 -- v_growth              : QoQ / YoY growth via window functions
 -- v_deceleration        : YoY growth vs prior-year YoY growth
--- v_rollforward         : implied billings reconstruction
+-- v_rollforward         : calculated billings (DR roll-forward)
 -- v_tableau_export      : final flat view for Tableau Public CSV export
 -- =====================================================================
+
+-- Drop first: CREATE OR REPLACE VIEW cannot rename or reorder columns
+DROP VIEW IF EXISTS v_tableau_export, v_rollforward, v_deceleration,
+                    v_growth, v_quarterly_revenue, v_deferred_revenue CASCADE;
 
 -- ---------------------------------------------------------------
 -- 1. Combined deferred revenue per company per quarter
@@ -143,10 +147,11 @@ FROM combined c
 WINDOW w AS (PARTITION BY company_id ORDER BY period_end);
 
 -- ---------------------------------------------------------------
--- 4. Deceleration score:
+-- 4. Growth acceleration / (deceleration):
 --    this quarter's YoY DR growth minus the same quarter's YoY DR
---    growth one year earlier. Negative + worsening = backlog not
---    being replenished.
+--    growth one year earlier -- i.e. how much growth accelerated
+--    or decelerated, the delta analysts quote in points/bps.
+--    Negative + worsening = backlog not being replenished.
 --    Also flags quarters where DR growth < revenue growth
 --    (burning backlog faster than replacing it).
 -- ---------------------------------------------------------------
@@ -155,17 +160,20 @@ SELECT
     g.*,
     g.dr_yoy_growth - LAG(g.dr_yoy_growth, 4)
         OVER (PARTITION BY g.company_id ORDER BY g.period_end)
-        AS dr_deceleration_score,
+        AS dr_yoy_growth_delta,
     (g.dr_yoy_growth < g.rev_yoy_growth) AS dr_lagging_revenue_flag
 FROM v_growth g;
 
 -- ---------------------------------------------------------------
--- 5. Roll-forward reconstruction:
---    implied billings = ending DR - beginning DR + revenue recognized
---    (assumes all revenue flows through deferred revenue; the gap
---    between implied and plausible billings is itself analytical
---    signal -- e.g., revenue billed-and-recognized in-period,
---    M&A opening balances, FX)
+-- 5. Deferred revenue roll-forward -> calculated billings:
+--    calculated billings = revenue + change in deferred revenue,
+--    the standard sell-side proxy for bookings. Book-to-bill
+--    (billings / revenue) > 1 means the company is booking business
+--    faster than it recognizes revenue.
+--    (assumes all revenue flows through deferred revenue; gaps vs.
+--    plausible billings are themselves analytical signal -- e.g.,
+--    revenue billed-and-recognized in-period, M&A opening balances,
+--    FX)
 -- ---------------------------------------------------------------
 CREATE OR REPLACE VIEW v_rollforward AS
 SELECT
@@ -176,11 +184,11 @@ SELECT
     g.revenue                             AS revenue_recognized,
     g.deferred_revenue_total
         - LAG(g.deferred_revenue_total) OVER w
-        + g.revenue                       AS implied_billings,
+        + g.revenue                       AS calculated_billings,
     (g.deferred_revenue_total
         - LAG(g.deferred_revenue_total) OVER w
         + g.revenue) / NULLIF(g.revenue, 0)
-                                          AS billings_to_revenue_ratio
+                                          AS book_to_bill_ratio
 FROM v_growth g
 WINDOW w AS (PARTITION BY g.company_id ORDER BY g.period_end);
 
@@ -199,11 +207,11 @@ SELECT
     d.dr_qoq_growth,
     d.dr_yoy_growth,
     d.rev_yoy_growth,
-    d.dr_deceleration_score,
+    d.dr_yoy_growth_delta,
     d.dr_lagging_revenue_flag,
     rf.dr_beginning,
-    rf.implied_billings,
-    rf.billings_to_revenue_ratio,
+    rf.calculated_billings,
+    rf.book_to_bill_ratio,
     ce.event_note,
     ce.source                   AS event_source
 FROM v_deceleration d
