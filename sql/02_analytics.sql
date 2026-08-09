@@ -167,9 +167,9 @@ FROM v_growth g;
 -- ---------------------------------------------------------------
 -- 5. Deferred revenue roll-forward -> calculated billings:
 --    calculated billings = revenue + change in deferred revenue,
---    the standard sell-side proxy for bookings. Book-to-bill
---    (billings / revenue) > 1 means the company is booking business
---    faster than it recognizes revenue.
+--    the standard SaaS proxy for bookings. The billings-to-revenue
+--    ratio > 1 means deferred revenue is growing -- the company is
+--    billing faster than it recognizes revenue.
 --    (assumes all revenue flows through deferred revenue; gaps vs.
 --    plausible billings are themselves analytical signal -- e.g.,
 --    revenue billed-and-recognized in-period, M&A opening balances,
@@ -188,7 +188,7 @@ SELECT
     (g.deferred_revenue_total
         - LAG(g.deferred_revenue_total) OVER w
         + g.revenue) / NULLIF(g.revenue, 0)
-                                          AS book_to_bill_ratio
+                                          AS billings_to_revenue_ratio
 FROM v_growth g
 WINDOW w AS (PARTITION BY g.company_id ORDER BY g.period_end);
 
@@ -211,7 +211,7 @@ SELECT
     d.dr_lagging_revenue_flag,
     rf.dr_beginning,
     rf.calculated_billings,
-    rf.book_to_bill_ratio,
+    rf.billings_to_revenue_ratio,
     ce.event_note,
     ce.source                   AS event_source
 FROM v_deceleration d

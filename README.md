@@ -23,7 +23,7 @@ SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
 ```
 
 - **Extraction** (`/extraction/pull_sec_data.py`): pulls deferred revenue (contract liability), recognized revenue, and RPO tags per company via SEC's `companyconcept` endpoint; dedupes amended filings
-- **Storage & analytics** (`/sql`): normalized schema; analytical views using window functions (`LAG`) for QoQ/YoY growth, growth acceleration/deceleration, and a **deferred revenue roll-forward** producing **calculated billings** (revenue + ΔDR, the standard sell-side bookings proxy) and **book-to-bill**
+- **Storage & analytics** (`/sql`): normalized schema; analytical views using window functions (`LAG`) for QoQ/YoY growth, growth acceleration/deceleration, and a **deferred revenue roll-forward** producing **calculated billings** (revenue + ΔDR, the standard SaaS bookings proxy) and a **billings-to-revenue ratio**
 - **Delivery**: PostgreSQL views exported to CSV for Tableau Public (which does not support live database connections)
 
 ## Key Analytical Concepts (ASC 606)
@@ -31,7 +31,7 @@ SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
 - **Deferred revenue (contract liability):** cash collected for services not yet delivered; a leading indicator of bookings momentum
 - **RPO (remaining performance obligation):** total contracted future revenue, billed and unbilled
 - **Roll-forward reconstruction:** beginning DR + billings − revenue recognized = ending DR; reconstructed from public data, with unexplained gaps (M&A opening balances, breakage, FX) flagged as analytical signal
-- **Calculated billings:** revenue + change in deferred revenue — the standard sell-side proxy for bookings; **book-to-bill** (billings ÷ revenue) above 1.0 means booking business faster than recognizing it
+- **Calculated billings:** revenue + change in deferred revenue — the standard SaaS proxy for bookings; the **billings-to-revenue ratio** above 1.0 means deferred revenue is growing (billing faster than recognizing)
 - **Growth deceleration:** change in YoY deferred revenue growth vs. a year earlier, in percentage points; negative and worsening = backlog not being replenished
 
 ## Data-Quality Fixes
