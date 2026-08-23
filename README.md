@@ -1,6 +1,6 @@
 # Deferred Revenue as an Early Warning System: Three SaaS Responses to AI
 
-**Author:** Ryan Choi, CPA | [LinkedIn](https://www.linkedin.com/in/ryan-yunseok-choi/) | [Tableau Dashboard](https://public.tableau.com/app/profile/ryan.ys.choi)
+**Author:** Ryan Choi, CPA | [LinkedIn](https://www.linkedin.com/in/ryan-yunseok-choi/) | [Tableau Public](https://public.tableau.com/app/profile/ryan.ys.choi)
 
 ## Business Question
 
@@ -34,7 +34,7 @@ SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
 - **Calculated billings:** revenue + change in deferred revenue — the standard SaaS proxy for bookings; the **billings-to-revenue ratio** above 1.0 means deferred revenue is growing (billing faster than recognizing)
 - **DR–revenue growth gap** (charted in the deceleration heatmap): YoY deferred revenue growth minus YoY revenue growth, in percentage points. Positive = the backlog is growing faster than the income statement, i.e. momentum is building ahead of reported revenue. Negative = revenue is outrunning the backlog, i.e. bookings are not keeping pace with what is being recognized. This is the leading-vs-lagging comparison the dashboard is built around.
 
-- **Growth deceleration** (`dr_yoy_growth_delta`, computed in SQL): change in YoY deferred revenue growth versus the same quarter a year earlier, in percentage points. Negative and worsening = the *rate* of backlog growth is itself slowing. Used in the analytical views as a second-derivativecheck on the gap metric above.
+- **Growth deceleration** (`dr_yoy_growth_delta`, computed in SQL): change in YoY deferred revenue growth versus the same quarter a year earlier, in percentage points. Negative and worsening = the *rate* of backlog growth is itself slowing. Used in the analytical views as a second-derivative check on the gap metric above.
 
 ## Data-Quality Fixes
 
