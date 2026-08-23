@@ -13,13 +13,13 @@ Deferred revenue and bookings deceleration are leading indicators of slowing Saa
 | **Duolingo** (DUOL) | Strategic pivot | Deliberately sacrificed $50M+ in bookings to expand free AI features and grow DAU |
 
 
-**Key takeaway:** a quantitative deceleration signal requires qualitative context to interpret correctly. Chegg's deceleration was existential; Coursera's weak course sales hide a shift toward steadier subscription revenue.; Duolingo's was self-inflicted and strategic.
+**Key takeaway:** a quantitative deceleration signal requires qualitative context to interpret correctly. Chegg's deceleration was existential; Coursera's weak course sales hide a shift toward steadier subscription revenue; Duolingo's was self-inflicted and strategic.
 
 ## Pipeline
 
 ```
 SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
-   (companyconcept)    (extract,     (window fns,     (interactive
+(companyconcept)    (extract,     (window fns,     (interactive
                         clean)        roll-forward)    dashboard)
 ```
 
