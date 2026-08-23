@@ -31,10 +31,10 @@ SEC EDGAR XBRL API  →  Python  →  PostgreSQL  →  Tableau Public
 - **Deferred revenue (contract liability):** cash collected for services not yet delivered; a leading indicator of bookings momentum
 - **RPO (remaining performance obligation):** total contracted future revenue, billed and unbilled
 - **Roll-forward reconstruction:** beginning DR + billings − revenue recognized = ending DR; reconstructed from public data, with unexplained gaps (M&A opening balances, breakage, FX) flagged as analytical signal
-- **Calculated billings:** revenue + change in deferred revenue — the standard SaaS proxy for bookings; the **billings-to-revenue ratio** above 1.0 means deferred revenue is growing (billing faster than recognizing)
-- **DR–revenue growth gap** (charted in the deceleration heatmap): YoY deferred revenue growth minus YoY revenue growth, in percentage points. Positive = the backlog is growing faster than the income statement, i.e. momentum is building ahead of reported revenue. Negative = revenue is outrunning the backlog, i.e. bookings are not keeping pace with what is being recognized. This is the leading-vs-lagging comparison the dashboard is built around.
-
-- **Growth deceleration** (`dr_yoy_growth_delta`, computed in SQL): change in YoY deferred revenue growth versus the same quarter a year earlier, in percentage points. Negative and worsening = the *rate* of backlog growth is itself slowing. Used in the analytical views as a second-derivative check on the gap metric above.
+- **Calculated billings:** revenue + change in deferred revenue — the standard SaaS proxy for bookings
+- **Billings-to-revenue ratio:** calculated billings ÷ revenue; above 1.0 means deferred revenue is growing (billing faster than recognizing)
+- **DR–revenue growth gap:** YoY deferred revenue growth minus YoY revenue growth, in percentage points — the metric charted in the deceleration heatmap. Positive = the backlog is growing faster than the income statement, i.e. momentum is building ahead of reported revenue. Negative = revenue is outrunning the backlog, i.e. bookings are not keeping pace with what is being recognized. This is the leading-vs-lagging comparison the dashboard is built around.
+- **Growth deceleration (`dr_yoy_growth_delta`):** change in YoY deferred revenue growth versus the same quarter a year earlier, in percentage points. Negative and worsening = the *rate* of backlog growth is itself slowing. Computed in SQL and used in the analytical views as a second-derivative check on the gap metric above.
 
 ## Data-Quality Fixes
 
