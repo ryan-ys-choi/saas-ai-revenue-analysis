@@ -9,10 +9,11 @@ Deferred revenue and bookings deceleration are leading indicators of slowing Saa
 | Company | Posture | Story |
 |---|---|---|
 | **Chegg** (CHGG) | Disrupted | Management directly attributes subscriber collapse to ChatGPT and Google AI Overviews |
-| **Duolingo** (DUOL) | Strategic pivot | Deliberately sacrificed $50M+ in bookings to expand free AI features and grow DAU |
 | **Coursera** (COUR) | Platform adaptation | First learning platform embedded directly inside ChatGPT; subscriptions now >85% of revenue |
+| **Duolingo** (DUOL) | Strategic pivot | Deliberately sacrificed $50M+ in bookings to expand free AI features and grow DAU |
 
-**Key takeaway:** a quantitative deceleration signal requires qualitative context to interpret correctly. Chegg's deceleration was existential; Duolingo's was self-inflicted and strategic; Coursera's transactional softness masks a subscription-mix improvement.
+
+**Key takeaway:** a quantitative deceleration signal requires qualitative context to interpret correctly. Chegg's deceleration was existential; Coursera's weak course sales hide a shift toward steadier subscription revenue.; Duolingo's was self-inflicted and strategic.
 
 ## Pipeline
 
